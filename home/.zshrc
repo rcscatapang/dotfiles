@@ -23,9 +23,9 @@ command -v fzf > /dev/null 2>&1 && source <(fzf --zsh)
 # Prompt (run `p10k configure` to regenerate, then copy back into the repo).
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-source "$DOTFILES/home/.exports"
-source "$DOTFILES/home/.aliases"
-source "$DOTFILES/home/.functions"
+source "$DOTFILES/shell/exports.zsh"
+source "$DOTFILES/shell/aliases.zsh"
+source "$DOTFILES/shell/functions.zsh"
 
 # Herd (PHP, Composer, Node via nvm). Herd appends lines here on PHP installs;
 # since ~/.zshrc is a symlink, they show up as a git diff in this repo.

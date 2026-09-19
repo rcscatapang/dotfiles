@@ -1,9 +1,9 @@
 #!/bin/bash
-# Install the Node.js version declared by this repository using Herd's NVM.
+# Install the default Node.js version using Herd's NVM.
 
 set -e
 
-DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+NODE_VERSION="${NODE_VERSION:-22}"
 NVM_DIR="$HOME/Library/Application Support/Herd/config/nvm"
 NVM_SOURCE="$NVM_DIR/nvm.sh"
 
@@ -21,9 +21,8 @@ mkdir -p "$NVM_DIR"
 # shellcheck source=/dev/null
 . "$NVM_SOURCE"
 
-cd "$DOTFILES"
-nvm install
-nvm use
-nvm alias default "$(tr -d '[:space:]' < .nvmrc)"
+nvm install "$NODE_VERSION"
+nvm use "$NODE_VERSION"
+nvm alias default "$NODE_VERSION"
 
 echo "Node $(node --version) is installed and set as the default"
