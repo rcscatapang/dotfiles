@@ -7,6 +7,17 @@ set -e
 
 DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
 BACKUP="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+INSTALL_MOBILE=false
+
+for argument in "$@"; do
+    case "$argument" in
+        --mobile) INSTALL_MOBILE=true ;;
+        *)
+            echo "Usage: $0 [--mobile]" >&2
+            exit 1
+            ;;
+    esac
+done
 
 step() { echo ""; echo -e "\033[0;34m➜\033[0m $1"; }
 success() { echo -e "\033[0;32m✓\033[0m $1"; }
@@ -110,10 +121,16 @@ HERD_NVM="$HOME/Library/Application Support/Herd/config/nvm/nvm.sh"
 HERD_BUNDLED_NVM="$HERD_APP/Contents/Resources/nvm/nvm.sh"
 if [ -s "$HERD_NVM" ] || [ -s "$HERD_BUNDLED_NVM" ]; then
     "$DOTFILES/bin/bootstrap-node"
-    success "Node version from .nvmrc installed through Herd"
+    success "Default Node version installed through Herd"
 else
     echo "Herd's NVM is unavailable after initialization." >&2
     exit 1
+fi
+
+if [ "$INSTALL_MOBILE" = true ]; then
+    step "Flutter and React Native"
+    "$DOTFILES/bin/bootstrap-mobile"
+    success "Mobile development tools installed"
 fi
 
 echo ""

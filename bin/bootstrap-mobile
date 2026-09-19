@@ -1,0 +1,93 @@
+#!/bin/bash
+# Install and configure the shared Flutter and React Native toolchain.
+
+set -e
+
+DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+ANDROID_HOME="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
+SDK_MANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+XCODE_APP="/Applications/Xcode.app"
+export ANDROID_HOME
+
+if ! command -v brew >/dev/null 2>&1; then
+    echo "Homebrew is unavailable. Run bin/install before bin/bootstrap-mobile." >&2
+    exit 1
+fi
+
+echo "Installing mobile development tools..."
+if [ -d "/Applications/Android Studio.app" ] && ! brew list --cask android-studio >/dev/null 2>&1; then
+    echo "Adopting the existing Android Studio installation into Homebrew..."
+    brew install --cask --adopt android-studio
+fi
+brew bundle --file="$DOTFILES/config/Brewfile.mobile"
+
+if [ -d "/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home" ]; then
+    export JAVA_HOME="/Library/Java/JavaVirtualMachines/zulu-17.jdk/Contents/Home"
+else
+    echo "Zulu JDK 17 was not found after installation." >&2
+    exit 1
+fi
+
+NVM_DIR="$HOME/Library/Application Support/Herd/config/nvm"
+NVM_SOURCE="$NVM_DIR/nvm.sh"
+if [ ! -s "$NVM_SOURCE" ]; then
+    NVM_SOURCE="/Applications/Herd.app/Contents/Resources/nvm/nvm.sh"
+fi
+if [ -s "$NVM_SOURCE" ]; then
+    export NVM_DIR
+    # shellcheck source=/dev/null
+    . "$NVM_SOURCE"
+    nvm use "${NODE_VERSION:-22}" --silent
+fi
+if ! command -v node >/dev/null 2>&1; then
+    echo "Node.js is unavailable. Run bin/bootstrap-node before bin/bootstrap-mobile." >&2
+    exit 1
+fi
+
+if [ ! -x "$SDK_MANAGER" ]; then
+    echo "Launching Android Studio for first-time SDK setup..."
+    open -a "Android Studio"
+    echo "  Complete the setup wizard and install the Android SDK and command-line tools."
+
+    for ((attempt = 1; attempt <= 300; attempt++)); do
+        [ -x "$SDK_MANAGER" ] && break
+        if ((attempt % 15 == 0)); then
+            echo "  Waiting for Android Studio to finish SDK setup..."
+        fi
+        sleep 2
+    done
+fi
+
+if [ ! -x "$SDK_MANAGER" ]; then
+    echo "Android SDK command-line tools were not found at $SDK_MANAGER." >&2
+    echo "Finish Android Studio's setup wizard, then rerun bin/bootstrap-mobile." >&2
+    exit 1
+fi
+
+echo "Reviewing Android SDK licences..."
+"$SDK_MANAGER" --licenses
+
+echo "Installing Android SDK packages for Flutter and React Native..."
+"$SDK_MANAGER" \
+    "platform-tools" \
+    "emulator" \
+    "platforms;android-35" \
+    "platforms;android-36" \
+    "build-tools;36.0.0"
+
+if [ -d "$XCODE_APP" ]; then
+    echo "Configuring Xcode command-line tools..."
+    sudo xcode-select --switch "$XCODE_APP/Contents/Developer"
+    sudo xcodebuild -runFirstLaunch
+else
+    echo "Xcode is required for iOS builds but is not installed." >&2
+    echo "Install Xcode from the Mac App Store, then rerun bin/bootstrap-mobile." >&2
+    open "macappstore://itunes.apple.com/app/id497799835" || true
+fi
+
+echo "Checking mobile toolchains..."
+echo "  Node $(node --version)"
+echo "  CocoaPods $(pod --version)"
+flutter doctor -v || true
+
+echo "Mobile environment ready. Create emulator devices in Android Studio or Xcode when needed."

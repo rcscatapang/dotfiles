@@ -1,24 +1,46 @@
 # dotfiles
 
-My macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development tools.
+My Apple Silicon macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development tools.
 
 ## Install
 
-```sh
-git clone git@github.com:rcscatapang/dotfiles.git ~/Workspace/code/dotfiles
-~/Workspace/code/dotfiles/bin/install
-```
+- Clone the repository and run the installer:
 
-Before creating symlinks, the installer moves existing dotfiles to
-`~/.dotfiles-backup/<timestamp>/`.
+  ```sh
+  git clone git@github.com:rcscatapang/dotfiles.git ~/Workspace/code/dotfiles
+  ~/Workspace/code/dotfiles/bin/install
+  ```
 
-## Structure
+- Add the optional Flutter and React Native toolchain with `bin/install --mobile` on a fresh machine or `bin/bootstrap-mobile` later.
+- Open a new terminal when installation finishes, or reload the current shell with `exec zsh`.
+- Existing dotfiles are moved to `~/.dotfiles-backup/<timestamp>/` before symlinks are created.
+- Preview optional macOS preferences with `bin/set-defaults --dry-run`, then apply them with `bin/set-defaults`.
+- Pass `--disable-hibernation` to `bin/set-defaults` only if traditional sleep without safe-sleep recovery is preferred.
 
-- `bin/install` installs packages and links the dotfiles.
-- `config/Brewfile` lists Homebrew packages and apps.
-- `home/` contains shell and Git configuration.
+## Included
+
+- **Shell and terminal:** Oh My Zsh, Powerlevel10k, tmux, Ghostty, zsh plugins, fzf, ripgrep, fd, bat, eza, shellcheck, and shfmt.
+- **Git and GitHub:** GitHub CLI, Git LFS, macOS Keychain credentials, sensible global defaults, and shared ignore rules.
+- **PHP and Laravel:** Herd, Composer, the Laravel installer, and PHP 8.2–8.5; PHP 8.5 is the default.
+- **Other runtimes:** Node.js 22 through Herd's NVM, Go, rbenv, and rustup. Set `NODE_VERSION` to override the Node.js version.
+- **Mobile development (optional):** Flutter, Android Studio, JDK 17, CocoaPods, and Android SDK packages shared by Flutter and React Native projects.
+- **AI coding:** Codex and Claude Code.
+- **Databases and services:** DBngin, Docker Desktop, TablePlus, MySQL client, Meilisearch, Cloudflare Tunnel, ngrok, and Watchman.
+- **Editors and API tools:** PhpStorm, Zed, Postman, 1Password, and the 1Password CLI.
+- **Media and documents:** FFmpeg, ImageMagick, OCRmyPDF, whisper.cpp, Ghostscript, Poppler, qpdf, and Tesseract.
+- **Dotfile configuration:** zsh, Powerlevel10k, Git, tmux, Ghostty, Zed, and portable PhpStorm settings.
+- **Project-local tools:** Pest, Pint, PHPStan, React Native, and similar dependencies stay with each project so it controls its own versions.
+
+## After installation
+
+- Complete Herd's first-run prompts when the installer opens it; PHP and Node.js provisioning will then continue automatically.
+- Sign in to 1Password and enable CLI integration if the `op` command should use the desktop session.
+- Run `p10k configure` to regenerate the prompt for a different display.
+- For mobile development, complete Android Studio's setup and licence prompts, install Xcode from the Mac App Store, and select emulator or simulator images as needed.
+- Restore the standard portable-Mac hibernation mode with `sudo pmset -a hibernatemode 3` if hibernation was disabled.
 
 ## Machine-specific settings
 
-Keep settings that should not be committed in `~/.zshrc.local` for the shell or
-`~/.gitconfig.local` for Git.
+- Put shell secrets, tokens, and machine-only paths in `~/.zshrc.local`.
+- Put a work email or other Git overrides in `~/.gitconfig.local`.
+- Keep both files untracked; the shared configuration loads them automatically.
