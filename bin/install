@@ -79,5 +79,42 @@ step "Git LFS"
 git lfs install --skip-repo > /dev/null
 success "Git LFS enabled"
 
+step "Herd runtimes"
+HERD_BIN="$HOME/Library/Application Support/Herd/bin"
+HERD_APP="/Applications/Herd.app"
+
+if [ ! -x "$HERD_BIN/herd" ] && [ -d "$HERD_APP" ]; then
+    echo "  Launching Herd for first-time initialization..."
+    open -a Herd
+    echo "  Complete any prompts in Herd; installation will continue automatically."
+
+    for ((attempt = 1; attempt <= 150; attempt++)); do
+        [ -x "$HERD_BIN/herd" ] && break
+        if ((attempt % 5 == 0)); then
+            echo "  Waiting for Herd to finish initialization..."
+        fi
+        sleep 2
+    done
+fi
+
+if [ -x "$HERD_BIN/herd" ]; then
+    export PATH="$HERD_BIN:$PATH"
+    "$DOTFILES/bin/bootstrap-php"
+    success "Herd PHP versions and Composer tools installed"
+else
+    echo "Herd did not finish initialization within five minutes." >&2
+    exit 1
+fi
+
+HERD_NVM="$HOME/Library/Application Support/Herd/config/nvm/nvm.sh"
+HERD_BUNDLED_NVM="$HERD_APP/Contents/Resources/nvm/nvm.sh"
+if [ -s "$HERD_NVM" ] || [ -s "$HERD_BUNDLED_NVM" ]; then
+    "$DOTFILES/bin/bootstrap-node"
+    success "Node version from .nvmrc installed through Herd"
+else
+    echo "Herd's NVM is unavailable after initialization." >&2
+    exit 1
+fi
+
 echo ""
 success "Done. Open a new terminal, or run: exec zsh"

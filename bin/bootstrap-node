@@ -1,0 +1,29 @@
+#!/bin/bash
+# Install the Node.js version declared by this repository using Herd's NVM.
+
+set -e
+
+DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+NVM_DIR="$HOME/Library/Application Support/Herd/config/nvm"
+NVM_SOURCE="$NVM_DIR/nvm.sh"
+
+if [ ! -s "$NVM_SOURCE" ]; then
+    NVM_SOURCE="/Applications/Herd.app/Contents/Resources/nvm/nvm.sh"
+fi
+
+if [ ! -s "$NVM_SOURCE" ]; then
+    echo "Herd's NVM is unavailable. Install Herd before running bin/bootstrap-node." >&2
+    exit 1
+fi
+
+export NVM_DIR
+mkdir -p "$NVM_DIR"
+# shellcheck source=/dev/null
+. "$NVM_SOURCE"
+
+cd "$DOTFILES"
+nvm install
+nvm use
+nvm alias default "$(tr -d '[:space:]' < .nvmrc)"
+
+echo "Node $(node --version) is installed and set as the default"

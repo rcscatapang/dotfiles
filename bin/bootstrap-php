@@ -1,0 +1,47 @@
+#!/bin/bash
+# Install Herd PHP versions and global Composer tools after Herd has initialized.
+
+set -e
+
+HERD_BIN="$HOME/Library/Application Support/Herd/bin"
+if [ -x "$HERD_BIN/herd" ]; then
+    export PATH="$HERD_BIN:$PATH"
+fi
+
+if ! command -v herd >/dev/null 2>&1; then
+    echo "Herd is unavailable. Open Herd once, then rerun bin/bootstrap-php." >&2
+    exit 1
+fi
+
+php_versions=(8.2 8.3 8.4 8.5)
+
+for version in "${php_versions[@]}"; do
+    if herd php:list --no-ansi | grep -Eq "^\| ${version}( \*)? +\| Installed"; then
+        echo "  PHP $version is already installed"
+    else
+        herd php:install "$version" --no-interaction
+    fi
+    herd php:update "$version" --no-interaction
+done
+
+herd use 8.5 --no-interaction
+echo "  PHP 8.5 is the global default"
+
+if ! command -v composer >/dev/null 2>&1; then
+    echo "Composer is unavailable. Open Herd once, then rerun bin/bootstrap-php." >&2
+    exit 1
+fi
+
+composer_packages=(
+    laravel/installer
+)
+
+for package in "${composer_packages[@]}"; do
+    if composer global show "$package" >/dev/null 2>&1; then
+        echo "  $package is already installed"
+    else
+        composer global require "$package"
+    fi
+done
+
+echo "PHP environment ready"
