@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# Install dotfiles: Homebrew packages, Oh My Zsh + plugins, and symlinks.
+# Safe to re-run. Existing files are moved to ~/.dotfiles-backup/<timestamp>/.
+
+set -e
+
+DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+BACKUP="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+
+step() { echo ""; echo -e "\033[0;34m➜\033[0m $1"; }
+success() { echo -e "\033[0;32m✓\033[0m $1"; }
+
+link() {
+    local src="$DOTFILES/$1" dest="$2"
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+        mkdir -p "$BACKUP"
+        mv "$dest" "$BACKUP/"
+        echo "  backed up $dest"
+    fi
+    mkdir -p "$(dirname "$dest")"
+    ln -sfn "$src" "$dest"
+    echo "  $dest -> $src"
+}
+
+step "Homebrew"
+if ! command -v brew &> /dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+brew bundle --file="$DOTFILES/config/Brewfile"
+success "Homebrew packages installed"
+
+step "Oh My Zsh"
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
+ZSH_CUSTOM="$HOME/.oh-my-zsh/custom"
+[ -d "$ZSH_CUSTOM/themes/powerlevel10k" ] || git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
+[ -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ] || git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+success "Oh My Zsh ready"
+
+step "Symlinks"
+link home/.zshrc            "$HOME/.zshrc"
+link home/.p10k.zsh         "$HOME/.p10k.zsh"
+link home/.gitconfig        "$HOME/.gitconfig"
+link home/.global-gitignore "$HOME/.global-gitignore"
+success "Symlinks created"
+
+step "Git LFS"
+git lfs install --skip-repo > /dev/null
+success "Git LFS enabled"
+
+echo ""
+success "Done. Open a new terminal, or run: exec zsh"

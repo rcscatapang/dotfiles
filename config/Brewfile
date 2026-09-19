@@ -1,0 +1,37 @@
+# Shell
+brew "zsh-syntax-highlighting"
+brew "tmux"
+brew "ripgrep"
+
+# Git
+brew "gh"
+brew "git-lfs"
+
+# Languages & runtimes (PHP, Composer and Node come from Herd)
+brew "go"
+brew "rbenv"
+brew "rustup"
+
+# Databases & services
+brew "mysql-client"
+brew "meilisearch"
+brew "cloudflared"
+brew "watchman"
+
+# Media / documents
+brew "ffmpeg"
+brew "ghostscript"
+brew "poppler"
+brew "whisper.cpp"
+
+# Dev apps
+cask "herd"
+cask "dbngin"
+cask "docker-desktop"
+cask "tableplus"
+cask "ghostty"
+cask "visual-studio-code"
+cask "phpstorm"
+cask "zed"
+cask "postman"
+cask "ngrok"
