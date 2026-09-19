@@ -1,0 +1,16 @@
+# Match the Ayu Dark editor theme and provide Nerd Font glyphs for Powerlevel10k.
+theme = Ayu
+font-family = GeistMono Nerd Font
+font-size = 15
+
+# Keep the terminal spacious without wasting too much screen area.
+window-padding-x = 12
+window-padding-y = 10
+window-padding-balance = true
+window-save-state = always
+
+# macOS behavior.
+macos-option-as-alt = left
+copy-on-select = false
+confirm-close-surface = false
+shell-integration = zsh

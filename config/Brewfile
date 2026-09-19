@@ -2,6 +2,12 @@
 brew "zsh-syntax-highlighting"
 brew "tmux"
 brew "ripgrep"
+brew "fzf"
+brew "fd"
+brew "bat"
+brew "eza"
+brew "shellcheck"
+brew "shfmt"
 
 # Git
 brew "gh"
@@ -12,6 +18,10 @@ brew "go"
 brew "rbenv"
 brew "rustup"
 
+# AI coding agents
+cask "codex"
+cask "claude-code"
+
 # Databases & services
 brew "mysql-client"
 brew "meilisearch"
@@ -21,7 +31,11 @@ brew "watchman"
 # Media / documents
 brew "ffmpeg"
 brew "ghostscript"
+brew "imagemagick"
+brew "ocrmypdf"
 brew "poppler"
+brew "qpdf"
+brew "tesseract"
 brew "whisper.cpp"
 
 # Dev apps
@@ -30,8 +44,13 @@ cask "dbngin"
 cask "docker-desktop"
 cask "tableplus"
 cask "ghostty"
-cask "visual-studio-code"
 cask "phpstorm"
 cask "zed"
 cask "postman"
 cask "ngrok"
+cask "1password"
+cask "1password-cli"
+
+# Fonts
+cask "font-geist"
+cask "font-geist-mono-nerd-font"

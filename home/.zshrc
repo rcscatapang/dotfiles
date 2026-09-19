@@ -17,6 +17,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
+# Fuzzy file/directory selection, command history (Ctrl-R), and completions.
+command -v fzf > /dev/null 2>&1 && source <(fzf --zsh)
+
 # Prompt (run `p10k configure` to regenerate, then copy back into the repo).
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 

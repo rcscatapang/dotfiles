@@ -13,14 +13,13 @@ alias uncommit="git reset --soft HEAD~1"
 alias nah="git reset --hard && git clean -df"
 
 # Editors
-alias vscode="code"
 alias phpstorm='open -a PhpStorm "$(pwd)"'
-alias zed='open -a Zed "$(pwd)"'
 
 # Misc
 alias python=python3
 alias o="open ."
-alias l="ls -laF"
+alias l="eza -la --group-directories-first --git"
+alias tree="eza --tree"
 alias c="claude"
 alias reload="exec zsh"
 alias dotfiles='cd "$DOTFILES"'

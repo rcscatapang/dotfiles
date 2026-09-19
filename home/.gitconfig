@@ -1,9 +1,9 @@
 [user]
 	name = Ryan Catapang
-	email = rcscatapang96@gmail.com
+	email = ryan@ryancatapang.com
 [core]
 	excludesfile = ~/.global-gitignore
-	editor = code --wait
+	editor = zed --wait
 [init]
 	defaultBranch = main
 [push]

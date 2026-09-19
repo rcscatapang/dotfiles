@@ -1,0 +1,5 @@
+<application>
+  <component name="CodeInsightSettings">
+    <option name="ENABLE_SECOND_REFORMAT" value="true" />
+  </component>
+</application>

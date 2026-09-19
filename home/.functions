@@ -11,6 +11,13 @@ artisan() {
     php "$dir/artisan" "$@"
 }
 
+# Fuzzy-select and switch to a local Git branch.
+gbf() {
+    local branch
+    branch="$(git branch --format='%(refname:short)' | fzf --height=40% --reverse --prompt='Git branch> ')" || return
+    [[ -n "$branch" ]] && git switch "$branch"
+}
+
 # Kill whatever is listening on a port: killport 8000
 killport() {
     lsof -ti tcp:"$1" | xargs kill -9

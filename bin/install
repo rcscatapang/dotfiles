@@ -45,7 +45,35 @@ link home/.zshrc            "$HOME/.zshrc"
 link home/.p10k.zsh         "$HOME/.p10k.zsh"
 link home/.gitconfig        "$HOME/.gitconfig"
 link home/.global-gitignore "$HOME/.global-gitignore"
+link home/.tmux.conf        "$HOME/.tmux.conf"
+link config/zed/settings.json "$HOME/.config/zed/settings.json"
+link config/zed/keymap.json   "$HOME/.config/zed/keymap.json"
+link config/ghostty/config    "$HOME/.config/ghostty/config"
 success "Symlinks created"
+
+step "PhpStorm settings"
+PHPSTORM_PRODUCT_INFO="/Applications/PhpStorm.app/Contents/Resources/product-info.json"
+if [ -f "$PHPSTORM_PRODUCT_INFO" ]; then
+    PHPSTORM_DIR_NAME="$(plutil -extract dataDirectoryName raw "$PHPSTORM_PRODUCT_INFO")"
+    PHPSTORM_CONFIG="$HOME/Library/Application Support/JetBrains/$PHPSTORM_DIR_NAME"
+    for setting in \
+        options/advancedSettings.xml \
+        options/colors.scheme.xml \
+        options/editor-font.xml \
+        options/editor.xml \
+        options/filetypes.xml \
+        options/ide.general.xml \
+        options/mac/keymap.xml \
+        options/php.xml \
+        options/terminal.xml \
+        options/ui.lnf.xml \
+        keymaps/ryan-catapang.xml; do
+        link "config/phpstorm/$setting" "$PHPSTORM_CONFIG/$setting"
+    done
+    success "PhpStorm settings linked for $PHPSTORM_DIR_NAME"
+else
+    echo "  PhpStorm not found; settings skipped"
+fi
 
 step "Git LFS"
 git lfs install --skip-repo > /dev/null

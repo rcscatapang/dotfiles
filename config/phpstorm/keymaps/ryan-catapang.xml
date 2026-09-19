@@ -1,0 +1,7 @@
+<keymap version="1" name="Ryan Catapang" parent="Mac OS X 10.5+">
+  <action id="FileChooser.TogglePathBar" />
+  <action id="ParameterInfo" />
+  <action id="SearchEverywhere">
+    <keyboard-shortcut first-keystroke="meta p" />
+  </action>
+</keymap>
