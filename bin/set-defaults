@@ -1,0 +1,199 @@
+#!/usr/bin/env bash
+#
+# Apply safe, developer-friendly macOS preferences.
+# Existing preference domains are exported to ~/.dotfiles-backup first.
+
+set -euo pipefail
+
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    echo "This script only supports macOS." >&2
+    exit 1
+fi
+
+DRY_RUN=false
+ASSUME_YES=false
+DISABLE_HIBERNATION=false
+
+for argument in "$@"; do
+    case "$argument" in
+        --dry-run) DRY_RUN=true ;;
+        --yes) ASSUME_YES=true ;;
+        --disable-hibernation) DISABLE_HIBERNATION=true ;;
+        -h|--help)
+            echo "Usage: bin/set-defaults [--dry-run] [--yes] [--disable-hibernation]"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $argument" >&2
+            exit 1
+            ;;
+    esac
+done
+
+if [[ -t 1 ]]; then
+    BLUE='\033[0;34m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    NC='\033[0m'
+else
+    BLUE=''
+    GREEN=''
+    YELLOW=''
+    NC=''
+fi
+
+step() { printf '\n%b➜%b %s\n' "$BLUE" "$NC" "$1"; }
+success() { printf '%b✓%b %s\n' "$GREEN" "$NC" "$1"; }
+warn() { printf '%b⚠%b %s\n' "$YELLOW" "$NC" "$1"; }
+
+write_default() {
+    if $DRY_RUN; then
+        printf '  defaults'
+        printf ' %q' "$@"
+        printf '\n'
+    else
+        defaults "$@"
+    fi
+}
+
+run() {
+    if $DRY_RUN; then
+        printf ' '
+        printf ' %q' "$@"
+        printf '\n'
+    else
+        "$@"
+    fi
+}
+
+backup_domain() {
+    local domain="$1"
+    local filename="$2"
+    defaults export "$domain" "$BACKUP/$filename.plist" >/dev/null 2>&1 || true
+}
+
+warn "This changes macOS preferences for the current user."
+echo "Close System Settings before continuing."
+
+if ! $ASSUME_YES && ! $DRY_RUN; then
+    read -r -p "Continue? (y/N) " reply
+    if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+        echo "Cancelled."
+        exit 0
+    fi
+fi
+
+BACKUP="$HOME/.dotfiles-backup/macos-defaults-$(date +%Y%m%d-%H%M%S)"
+
+if ! $DRY_RUN; then
+    step "Backing up current preferences"
+    mkdir -p "$BACKUP"
+    backup_domain NSGlobalDomain NSGlobalDomain
+    backup_domain com.apple.finder com.apple.finder
+    backup_domain com.apple.desktopservices com.apple.desktopservices
+    backup_domain com.apple.screensaver com.apple.screensaver
+    backup_domain com.apple.screencapture com.apple.screencapture
+    backup_domain com.apple.dock com.apple.dock
+    backup_domain com.apple.ActivityMonitor com.apple.ActivityMonitor
+    backup_domain com.apple.TextEdit com.apple.TextEdit
+    if $DISABLE_HIBERNATION; then
+        pmset -g custom > "$BACKUP/pmset.txt"
+    fi
+    success "Preferences backed up to $BACKUP"
+fi
+
+step "Configuring general preferences"
+write_default write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
+write_default write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+write_default write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+write_default write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+write_default write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+write_default write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+write_default write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
+write_default write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+write_default write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+write_default write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+write_default write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
+success "General preferences configured"
+
+step "Configuring keyboard navigation"
+write_default write NSGlobalDomain AppleKeyboardUIMode -int 3
+success "Keyboard navigation configured"
+
+step "Configuring screen security"
+write_default write com.apple.screensaver askForPassword -int 1
+write_default write com.apple.screensaver askForPasswordDelay -int 0
+success "Screen security configured"
+
+if $DISABLE_HIBERNATION; then
+    step "Disabling hibernation"
+    warn "A portable Mac can lose the current session if its battery is fully depleted during sleep."
+    run sudo pmset -a hibernatemode 0
+    success "Hibernation disabled"
+fi
+
+step "Configuring Finder"
+write_default write com.apple.finder NewWindowTarget -string PfDe
+write_default write com.apple.finder NewWindowTargetPath -string "file://$HOME/Desktop/"
+write_default write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+write_default write com.apple.finder ShowHardDrivesOnDesktop -bool true
+write_default write com.apple.finder ShowMountedServersOnDesktop -bool true
+write_default write com.apple.finder ShowRemovableMediaOnDesktop -bool true
+write_default write NSGlobalDomain AppleShowAllExtensions -bool true
+write_default write com.apple.finder _FXShowPosixPathInTitle -bool true
+write_default write com.apple.finder ShowPathbar -bool true
+write_default write com.apple.finder ShowStatusBar -bool true
+write_default write com.apple.finder FXDefaultSearchScope -string SCcf
+write_default write com.apple.finder FXEnableExtensionChangeWarning -bool false
+write_default write com.apple.finder FXPreferredViewStyle -string Nlsv
+write_default write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+write_default write com.apple.desktopservices DSDontWriteUSBStores -bool true
+write_default write com.apple.finder FXInfoPanesExpanded -dict \
+    General -bool true \
+    OpenWith -bool true \
+    Privileges -bool true
+run chflags nohidden "$HOME/Library"
+success "Finder configured"
+
+step "Configuring screenshots"
+write_default write com.apple.screencapture include-date -bool false
+write_default write com.apple.screencapture name -string screenshot
+write_default write com.apple.screencapture type -string png
+success "Screenshots configured"
+
+step "Configuring Dock"
+write_default write com.apple.dock no-bouncing -bool true
+write_default write com.apple.dock tilesize -int 72
+write_default write com.apple.dock show-process-indicators -bool false
+write_default write com.apple.dock mru-spaces -bool false
+write_default write com.apple.dock showhidden -bool true
+success "Dock configured"
+
+step "Configuring Activity Monitor"
+write_default write com.apple.ActivityMonitor OpenMainWindow -bool true
+write_default write com.apple.ActivityMonitor IconType -int 5
+write_default write com.apple.ActivityMonitor ShowCategory -int 0
+write_default write com.apple.ActivityMonitor SortColumn -string CPUUsage
+write_default write com.apple.ActivityMonitor SortDirection -int 0
+success "Activity Monitor configured"
+
+step "Configuring TextEdit"
+write_default write com.apple.TextEdit RichText -int 0
+write_default write com.apple.TextEdit PlainTextEncoding -int 4
+write_default write com.apple.TextEdit PlainTextEncodingForWrite -int 4
+success "TextEdit configured"
+
+if ! $DRY_RUN; then
+    step "Restarting affected applications"
+    for application in Dock Finder SystemUIServer; do
+        killall "$application" >/dev/null 2>&1 || true
+    done
+fi
+
+echo
+if $DRY_RUN; then
+    success "Dry run complete; no preferences were changed"
+else
+    success "macOS preferences configured"
+    warn "Some changes may require signing out or restarting the Mac."
+fi
