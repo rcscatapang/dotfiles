@@ -23,14 +23,14 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
 
 - **Shell and terminal:** Oh My Zsh, Powerlevel10k, tmux, Ghostty, zsh plugins, fzf, zoxide, ripgrep, fd, bat, eza, bottom, shellcheck, shfmt, actionlint, jq, and yq.
 - **Git and GitHub:** GitHub CLI, Git LFS, Gitleaks, Delta, Lazygit, macOS Keychain credentials, sensible global defaults, and shared ignore rules.
-- **Developer workflow:** direnv for project-specific environments.
+- **Developer workflow:** Bun, Yarn, and direnv for project-specific environments.
 - **Cloud tooling:** AWS CLI and Google Cloud CLI.
 - **PHP and Laravel:** Herd, Composer, the Laravel installer, and PHP 8.2–8.5; PHP 8.5 is the default.
 - **Other runtimes:** Node.js 22 through Herd's NVM, the agent-browser CLI, Go, rbenv, and rustup. Set `NODE_VERSION` to override the Node.js version.
 - **Mobile development (optional):** Flutter, Android Studio, JDK 17, CocoaPods, and Android SDK packages shared by Flutter and React Native projects.
-- **AI coding:** Codex, Claude Code, and a shared set of personal agent skills.
+- **AI coding:** Codex CLI and desktop app, Claude Code and desktop app, and a shared set of personal agent skills.
 - **Databases and services:** DBngin, Docker Desktop, TablePlus, MySQL client, Meilisearch, Cloudflare Tunnel, ngrok, and Watchman.
-- **Editors and API tools:** PhpStorm, Zed, Postman, 1Password, and the 1Password CLI.
+- **Editors and apps:** PhpStorm, Zed, Postman, 1Password and its CLI, Cyberduck, Discord, Figma, Firefox, HELO, Keka, Rectangle, Slack, and Zoom.
 - **Media and documents:** FFmpeg, ImageMagick, OCRmyPDF, whisper.cpp, Ghostscript, Poppler, qpdf, and Tesseract.
 - **Dotfile configuration:** zsh, Powerlevel10k, Git, tmux, Ghostty, Zed, and portable PhpStorm settings.
 - **Project-local tools:** Pest, Pint, PHPStan, React Native, and similar dependencies stay with each project so it controls its own versions.

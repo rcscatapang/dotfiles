@@ -22,9 +22,11 @@ brew "git-lfs"
 brew "gitleaks"
 
 # Developer workflow
+brew "bun"
 brew "direnv"
 brew "git-delta"
 brew "lazygit"
+brew "yarn"
 
 # Cloud CLIs
 brew "awscli"
@@ -36,7 +38,9 @@ brew "rbenv"
 brew "rustup"
 
 # AI coding agents
+cask "claude"
 cask "codex"
+cask "codex-app"
 cask "claude-code"
 
 # Databases & services
@@ -59,6 +63,7 @@ brew "whisper.cpp"
 cask "herd"
 cask "dbngin"
 cask "docker-desktop"
+cask "cyberduck"
 cask "tableplus"
 cask "ghostty"
 cask "phpstorm"
@@ -67,6 +72,14 @@ cask "postman"
 cask "ngrok"
 cask "1password"
 cask "1password-cli"
+cask "discord"
+cask "figma"
+cask "firefox"
+cask "helo"
+cask "keka"
+cask "rectangle"
+cask "slack"
+cask "zoom"
 
 # Fonts
 cask "font-geist"
