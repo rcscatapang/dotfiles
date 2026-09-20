@@ -12,6 +12,7 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
   ```
 
 - Add the optional Flutter and React Native toolchain with `bin/install --mobile` on a fresh machine or `bin/bootstrap-mobile` later.
+- Configure a GitHub SSH key with `bin/setup-github-ssh`. It uses the email in the shared Git config by default, preserves an existing key, and copies the public key for GitHub.
 - Open a new terminal when installation finishes, or reload the current shell with `exec zsh`.
 - Existing dotfiles are moved to `~/.dotfiles-backup/<timestamp>/` before symlinks are created.
 - The installer can be run from another clone or location; the most recently run clone replaces the existing symlinks and becomes active.

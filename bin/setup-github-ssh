@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Create and configure the default SSH key used for GitHub on macOS.
+
+set -euo pipefail
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" || "$#" -gt 1 ]]; then
+    echo "Usage: $0 [email]"
+    exit 0
+fi
+
+email="${1:-$(git config --global user.email || true)}"
+if [[ -z "$email" ]]; then
+    echo "Pass the email address associated with GitHub: $0 you@example.com" >&2
+    exit 1
+fi
+
+ssh_directory="$HOME/.ssh"
+key_path="$ssh_directory/id_ed25519"
+config_path="$ssh_directory/config"
+block_start="# BEGIN dotfiles GitHub SSH"
+
+mkdir -p "$ssh_directory"
+chmod 700 "$ssh_directory"
+
+if [[ -f "$key_path" ]]; then
+    echo "Using the existing SSH key at $key_path (it was not replaced)."
+    if [[ ! -f "$key_path.pub" ]]; then
+        ssh-keygen -y -f "$key_path" > "$key_path.pub"
+        chmod 644 "$key_path.pub"
+        echo "Recreated the missing public key."
+    fi
+elif [[ -e "$key_path" || -e "$key_path.pub" ]]; then
+    echo "An incomplete or unsupported key already exists at $key_path; nothing was changed." >&2
+    exit 1
+else
+    echo "Generating a new SSH key for GitHub..."
+    ssh-keygen -t ed25519 -C "$email" -f "$key_path"
+fi
+
+touch "$config_path"
+chmod 600 "$config_path"
+
+if ! grep -Fq "$block_start" "$config_path"; then
+    if [[ -s "$config_path" ]]; then
+        config_backup="$config_path.backup-$(date +%Y%m%d-%H%M%S)"
+        cp -p "$config_path" "$config_backup"
+        echo "Backed up the existing SSH config to $config_backup."
+    fi
+
+    temporary_config="$(mktemp "$ssh_directory/config.XXXXXX")"
+    {
+        printf '%s\n' \
+            "$block_start" \
+            "Host github.com" \
+            "  AddKeysToAgent yes" \
+            "  UseKeychain yes" \
+            "  IdentityFile ~/.ssh/id_ed25519" \
+            "# END dotfiles GitHub SSH" \
+            ""
+        cat "$config_path"
+    } > "$temporary_config"
+    chmod 600 "$temporary_config"
+    # Preserve config_path itself when another dotfiles setup manages it as a symlink.
+    command cat "$temporary_config" > "$config_path"
+    rm "$temporary_config"
+fi
+
+ssh-add --apple-use-keychain "$key_path"
+pbcopy < "$key_path.pub"
+
+echo "The public key is copied to the clipboard."
+echo "Add it at https://github.com/settings/ssh/new, then verify with: ssh -T git@github.com"
