@@ -6,8 +6,11 @@ brew "fzf"
 brew "fd"
 brew "bat"
 brew "eza"
+brew "zoxide"
+brew "bottom"
 brew "shellcheck"
 brew "shfmt"
+brew "actionlint"
 
 # Data & configuration
 brew "jq"
@@ -16,6 +19,7 @@ brew "yq"
 # Git
 brew "gh"
 brew "git-lfs"
+brew "gitleaks"
 
 # Developer workflow
 brew "direnv"

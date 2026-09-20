@@ -20,6 +20,9 @@ source $ZSH/oh-my-zsh.sh
 # Fuzzy file/directory selection, command history (Ctrl-R), and completions.
 command -v fzf > /dev/null 2>&1 && source <(fzf --zsh)
 
+# Smarter directory navigation while retaining normal `cd` behavior.
+command -v zoxide > /dev/null 2>&1 && eval "$(zoxide init zsh)"
+
 # Prompt (run `p10k configure` to regenerate, then copy back into the repo).
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 

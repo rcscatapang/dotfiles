@@ -25,4 +25,16 @@ nvm install "$NODE_VERSION"
 nvm use "$NODE_VERSION"
 nvm alias default "$NODE_VERSION"
 
+global_packages=(
+    agent-browser
+)
+
+for package in "${global_packages[@]}"; do
+    if npm list --global --depth=0 "$package" >/dev/null 2>&1; then
+        echo "  $package is already installed"
+    else
+        npm install --global "$package"
+    fi
+done
+
 echo "Node $(node --version) is installed and set as the default"

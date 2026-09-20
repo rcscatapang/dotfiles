@@ -20,12 +20,12 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
 
 ## Included
 
-- **Shell and terminal:** Oh My Zsh, Powerlevel10k, tmux, Ghostty, zsh plugins, fzf, ripgrep, fd, bat, eza, shellcheck, shfmt, jq, and yq.
-- **Git and GitHub:** GitHub CLI, Git LFS, Delta, Lazygit, macOS Keychain credentials, sensible global defaults, and shared ignore rules.
+- **Shell and terminal:** Oh My Zsh, Powerlevel10k, tmux, Ghostty, zsh plugins, fzf, zoxide, ripgrep, fd, bat, eza, bottom, shellcheck, shfmt, actionlint, jq, and yq.
+- **Git and GitHub:** GitHub CLI, Git LFS, Gitleaks, Delta, Lazygit, macOS Keychain credentials, sensible global defaults, and shared ignore rules.
 - **Developer workflow:** direnv for project-specific environments.
 - **Cloud tooling:** AWS CLI and Google Cloud CLI.
 - **PHP and Laravel:** Herd, Composer, the Laravel installer, and PHP 8.2–8.5; PHP 8.5 is the default.
-- **Other runtimes:** Node.js 22 through Herd's NVM, Go, rbenv, and rustup. Set `NODE_VERSION` to override the Node.js version.
+- **Other runtimes:** Node.js 22 through Herd's NVM, the agent-browser CLI, Go, rbenv, and rustup. Set `NODE_VERSION` to override the Node.js version.
 - **Mobile development (optional):** Flutter, Android Studio, JDK 17, CocoaPods, and Android SDK packages shared by Flutter and React Native projects.
 - **AI coding:** Codex, Claude Code, and a shared set of personal agent skills.
 - **Databases and services:** DBngin, Docker Desktop, TablePlus, MySQL client, Meilisearch, Cloudflare Tunnel, ngrok, and Watchman.
