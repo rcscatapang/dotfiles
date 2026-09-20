@@ -70,6 +70,11 @@ step "Agent skills"
 DOTFILES_BACKUP_ROOT="$BACKUP" "$DOTFILES/bin/link-agent-skills"
 success "Shared skills linked for Codex and Claude Code"
 
+step "Agent status lines"
+link config/claude/statusline-command.sh "$HOME/.claude/statusline-command.sh"
+"$DOTFILES/bin/configure-agent-statuslines"
+success "Claude and Codex status lines configured"
+
 step "PhpStorm settings"
 PHPSTORM_PRODUCT_INFO="/Applications/PhpStorm.app/Contents/Resources/product-info.json"
 if [ -f "$PHPSTORM_PRODUCT_INFO" ]; then
