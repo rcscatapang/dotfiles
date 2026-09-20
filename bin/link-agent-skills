@@ -25,12 +25,15 @@ backup_destination() {
 link_skill() {
     local source="$1" destination="$2"
 
-    if [ -e "$destination" ] && [ ! -L "$destination" ]; then
+    if [ -L "$destination" ]; then
+        # Repoint skills when installation is run from a different clone.
+        unlink "$destination"
+    elif [ -e "$destination" ]; then
         backup_destination "$destination"
     fi
 
     mkdir -p "$(dirname "$destination")"
-    ln -sfn "$source" "$destination"
+    ln -s "$source" "$destination"
     echo "  $destination -> $source"
 }
 

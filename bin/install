@@ -24,13 +24,17 @@ success() { echo -e "\033[0;32m✓\033[0m $1"; }
 
 link() {
     local src="$DOTFILES/$1" dest="$2"
-    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+
+    if [ -L "$dest" ]; then
+        # The most recently run clone owns the destination.
+        unlink "$dest"
+    elif [ -e "$dest" ]; then
         mkdir -p "$BACKUP"
         mv "$dest" "$BACKUP/"
         echo "  backed up $dest"
     fi
     mkdir -p "$(dirname "$dest")"
-    ln -sfn "$src" "$dest"
+    ln -s "$src" "$dest"
     echo "  $dest -> $src"
 }
 

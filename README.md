@@ -14,6 +14,7 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
 - Add the optional Flutter and React Native toolchain with `bin/install --mobile` on a fresh machine or `bin/bootstrap-mobile` later.
 - Open a new terminal when installation finishes, or reload the current shell with `exec zsh`.
 - Existing dotfiles are moved to `~/.dotfiles-backup/<timestamp>/` before symlinks are created.
+- The installer can be run from another clone or location; the most recently run clone replaces the existing symlinks and becomes active.
 - Preview optional macOS preferences with `bin/set-defaults --dry-run`, then apply them with `bin/set-defaults`.
 - Pass `--disable-hibernation` to `bin/set-defaults` only if traditional sleep without safe-sleep recovery is preferred.
 
