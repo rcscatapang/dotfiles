@@ -62,6 +62,10 @@ link config/zed/keymap.json   "$HOME/.config/zed/keymap.json"
 link config/ghostty/config    "$HOME/.config/ghostty/config"
 success "Symlinks created"
 
+step "Agent skills"
+DOTFILES_BACKUP_ROOT="$BACKUP" "$DOTFILES/bin/link-agent-skills"
+success "Shared skills linked for Codex and Claude Code"
+
 step "PhpStorm settings"
 PHPSTORM_PRODUCT_INFO="/Applications/PhpStorm.app/Contents/Resources/product-info.json"
 if [ -f "$PHPSTORM_PRODUCT_INFO" ]; then

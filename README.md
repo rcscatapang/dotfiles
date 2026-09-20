@@ -26,7 +26,7 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
 - **PHP and Laravel:** Herd, Composer, the Laravel installer, and PHP 8.2–8.5; PHP 8.5 is the default.
 - **Other runtimes:** Node.js 22 through Herd's NVM, Go, rbenv, and rustup. Set `NODE_VERSION` to override the Node.js version.
 - **Mobile development (optional):** Flutter, Android Studio, JDK 17, CocoaPods, and Android SDK packages shared by Flutter and React Native projects.
-- **AI coding:** Codex and Claude Code.
+- **AI coding:** Codex, Claude Code, and a shared set of personal agent skills.
 - **Databases and services:** DBngin, Docker Desktop, TablePlus, MySQL client, Meilisearch, Cloudflare Tunnel, ngrok, and Watchman.
 - **Editors and API tools:** PhpStorm, Zed, Postman, 1Password, and the 1Password CLI.
 - **Media and documents:** FFmpeg, ImageMagick, OCRmyPDF, whisper.cpp, Ghostscript, Poppler, qpdf, and Tesseract.
@@ -46,3 +46,24 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
 - Put shell secrets, tokens, and machine-only paths in `~/.zshrc.local`.
 - Put a work email or other Git overrides in `~/.gitconfig.local`.
 - Keep both files untracked; the shared configuration loads them automatically.
+
+## Shared agent skills
+
+Personal skills live once in `config/agents/skills/`. The installer links each skill into both discovery locations:
+
+- `~/.agents/skills/` for Codex
+- `~/.claude/skills/` for Claude Code
+
+`config/agents/skill-lock.json` records where the imported skills came from.
+
+Run `bin/link-agent-skills` after adding or removing a skill. It leaves unrelated and application-managed skills in place, and backs up an existing real directory before replacing it with a link.
+
+### TBD: Draft next skills
+
+- Laravel/Pest development with Boost and project conventions
+- Pull-request checks, review feedback, and summaries
+- Dependency upgrades across Composer, npm, CocoaPods, and Flutter
+- API contract and backward-compatibility reviews
+- Releases, changelogs, tags, and release notes
+
+Prefer skills that encode a recurring personal workflow or a non-obvious local constraint. Leave generic knowledge to the coding agent or its bundled skills.

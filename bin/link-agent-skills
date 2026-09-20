@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Link shared skills without disturbing client-managed entries.
+
+set -euo pipefail
+
+DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+SKILLS_SOURCE="$DOTFILES/config/agents/skills"
+BACKUP_ROOT="${DOTFILES_BACKUP_ROOT:-$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)}"
+
+if [ ! -d "$SKILLS_SOURCE" ]; then
+    echo "Shared skills directory not found: $SKILLS_SOURCE" >&2
+    exit 1
+fi
+
+backup_destination() {
+    local destination="$1" relative_destination
+
+    relative_destination="${destination#"$HOME"/}"
+    mkdir -p "$BACKUP_ROOT/$(dirname "$relative_destination")"
+    mv "$destination" "$BACKUP_ROOT/$relative_destination"
+    echo "  backed up $destination"
+}
+
+link_skill() {
+    local source="$1" destination="$2"
+
+    if [ -e "$destination" ] && [ ! -L "$destination" ]; then
+        backup_destination "$destination"
+    fi
+
+    mkdir -p "$(dirname "$destination")"
+    ln -sfn "$source" "$destination"
+    echo "  $destination -> $source"
+}
+
+remove_stale_links() {
+    local skills_directory="$1" destination target
+
+    [ -d "$skills_directory" ] || return
+
+    for destination in "$skills_directory"/*; do
+        [ -L "$destination" ] || continue
+        target="$(readlink "$destination")"
+
+        case "$target" in
+            "$SKILLS_SOURCE"/*)
+                if [ ! -e "$target" ]; then
+                    unlink "$destination"
+                    echo "  removed stale link $destination"
+                fi
+                ;;
+        esac
+    done
+}
+
+remove_stale_links "$HOME/.agents/skills"
+remove_stale_links "$HOME/.claude/skills"
+
+linked=0
+for skill in "$SKILLS_SOURCE"/*; do
+    [ -f "$skill/SKILL.md" ] || continue
+
+    skill_name="$(basename "$skill")"
+    link_skill "$skill" "$HOME/.agents/skills/$skill_name"
+    link_skill "$skill" "$HOME/.claude/skills/$skill_name"
+    linked=$((linked + 1))
+done
+
+# Migrate the legacy Claude command.
+legacy_commit_command="$HOME/.claude/commands/commit.md"
+if [ -e "$legacy_commit_command" ] && [ ! -L "$legacy_commit_command" ]; then
+    backup_destination "$legacy_commit_command"
+fi
+
+echo "Linked $linked shared skills for Codex and Claude Code."
