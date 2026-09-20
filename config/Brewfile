@@ -9,9 +9,22 @@ brew "eza"
 brew "shellcheck"
 brew "shfmt"
 
+# Data & configuration
+brew "jq"
+brew "yq"
+
 # Git
 brew "gh"
 brew "git-lfs"
+
+# Developer workflow
+brew "direnv"
+brew "git-delta"
+brew "lazygit"
+
+# Cloud CLIs
+brew "awscli"
+cask "gcloud-cli"
 
 # Languages & runtimes (PHP, Composer and Node come from Herd)
 brew "go"
