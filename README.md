@@ -50,7 +50,7 @@ Personal macOS setup for zsh, Git, Homebrew, PHP/Laravel, and other development 
 
 ## Shared agent skills
 
-Personal skills live once in `config/agents/skills/`. The installer links each skill into both discovery locations:
+Personal skills live in `config/agents/skills/`. The installer links every personal skill into both discovery locations:
 
 - `~/.agents/skills/` for Codex
 - `~/.claude/skills/` for Claude Code
@@ -58,6 +58,16 @@ Personal skills live once in `config/agents/skills/`. The installer links each s
 `config/agents/skill-lock.json` records where the imported skills came from.
 
 Run `bin/link-agent-skills` after adding or removing a skill. It leaves unrelated and application-managed skills in place, and backs up an existing real directory before replacing it with a link.
+
+### Marketing skills
+
+The marketing collection in `config/agents/bundles/marketing/` is disabled by default and is not linked globally. To enable it for one project only, run this from that project's root:
+
+```sh
+~/Workspace/code/dotfiles/bin/link-agent-skills --project-bundle marketing "$PWD"
+```
+
+This links the collection into the project's `.agents/skills/` for Codex and `.claude/skills/` for Claude Code. Remove those project links to disable it again.
 
 ### TBD: Draft next skills
 

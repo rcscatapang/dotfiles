@@ -6,6 +6,7 @@ set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
 SKILLS_SOURCE="$DOTFILES/config/agents/skills"
+BUNDLES_SOURCE="$DOTFILES/config/agents/bundles"
 BACKUP_ROOT="${DOTFILES_BACKUP_ROOT:-$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)}"
 
 if [ ! -d "$SKILLS_SOURCE" ]; then
@@ -40,14 +41,14 @@ link_skill() {
 remove_stale_links() {
     local skills_directory="$1" destination target
 
-    [ -d "$skills_directory" ] || return
+    [ -d "$skills_directory" ] || return 0
 
     for destination in "$skills_directory"/*; do
         [ -L "$destination" ] || continue
         target="$(readlink "$destination")"
 
         case "$target" in
-            "$SKILLS_SOURCE"/*)
+            "$SKILLS_SOURCE"/* | "$BUNDLES_SOURCE"/*/skills/*)
                 if [ ! -e "$target" ]; then
                     unlink "$destination"
                     echo "  removed stale link $destination"
@@ -57,18 +58,84 @@ remove_stale_links() {
     done
 }
 
+link_skills_from() {
+    local source_directory="$1" agents_directory="$2" claude_directory="$3"
+    local skill skill_name
+
+    [ -d "$source_directory" ] || return 0
+
+    for skill in "$source_directory"/*; do
+        [ -f "$skill/SKILL.md" ] || continue
+
+        skill_name="$(basename "$skill")"
+        link_skill "$skill" "$agents_directory/$skill_name"
+        link_skill "$skill" "$claude_directory/$skill_name"
+        linked=$((linked + 1))
+    done
+}
+
+remove_global_bundle_links() {
+    local skills_directory="$1" destination target
+
+    [ -d "$skills_directory" ] || return 0
+
+    for destination in "$skills_directory"/*; do
+        [ -L "$destination" ] || continue
+        target="$(readlink "$destination")"
+
+        case "$target" in
+            "$BUNDLES_SOURCE"/*/skills/*)
+                unlink "$destination"
+                echo "  removed globally linked bundle skill $destination"
+                ;;
+        esac
+    done
+}
+
+if [ "$#" -eq 3 ] && [ "$1" = "--project-bundle" ]; then
+    bundle_name="$2"
+    project_root="$3"
+
+    case "$bundle_name" in
+        "" | *[!A-Za-z0-9_-]*)
+            echo "Invalid bundle name: $bundle_name" >&2
+            exit 1
+            ;;
+    esac
+
+    if [ ! -d "$project_root" ]; then
+        echo "Project directory not found: $project_root" >&2
+        exit 1
+    fi
+
+    project_root="$(cd "$project_root" && pwd)"
+    bundle_source="$BUNDLES_SOURCE/$bundle_name/skills"
+    if [ ! -d "$bundle_source" ]; then
+        echo "Skill bundle not found: $bundle_name" >&2
+        exit 1
+    fi
+
+    remove_stale_links "$project_root/.agents/skills"
+    remove_stale_links "$project_root/.claude/skills"
+
+    linked=0
+    link_skills_from "$bundle_source" "$project_root/.agents/skills" "$project_root/.claude/skills"
+    echo "Linked $linked $bundle_name skills for this project in Codex and Claude Code."
+    exit 0
+fi
+
+if [ "$#" -ne 0 ]; then
+    echo "Usage: $0 [--project-bundle <bundle> <project-directory>]" >&2
+    exit 1
+fi
+
 remove_stale_links "$HOME/.agents/skills"
 remove_stale_links "$HOME/.claude/skills"
+remove_global_bundle_links "$HOME/.agents/skills"
+remove_global_bundle_links "$HOME/.claude/skills"
 
 linked=0
-for skill in "$SKILLS_SOURCE"/*; do
-    [ -f "$skill/SKILL.md" ] || continue
-
-    skill_name="$(basename "$skill")"
-    link_skill "$skill" "$HOME/.agents/skills/$skill_name"
-    link_skill "$skill" "$HOME/.claude/skills/$skill_name"
-    linked=$((linked + 1))
-done
+link_skills_from "$SKILLS_SOURCE" "$HOME/.agents/skills" "$HOME/.claude/skills"
 
 # Migrate the legacy Claude command.
 legacy_commit_command="$HOME/.claude/commands/commit.md"
