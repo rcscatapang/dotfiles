@@ -14,6 +14,9 @@ setopt HIST_IGNORE_ALL_DUPS HIST_REDUCE_BLANKS SHARE_HISTORY
 # Homebrew
 export HOMEBREW_NO_ANALYTICS=1
 
+# Bold blue directories complement the Ghostty palette; type suffixes provide a non-color cue.
+export EZA_COLORS="di=1;34"
+
 # PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.composer/vendor/bin:$PATH"

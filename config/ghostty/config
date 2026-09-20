@@ -1,15 +1,45 @@
-# Match the Ayu Dark editor theme and provide Nerd Font glyphs for Powerlevel10k.
-theme = Ayu
-font-family = GeistMono Nerd Font
-font-size = 15
+# Refined warm-light palette.
+background = #FAF7F0
+foreground = #26313D
 
-# Keep the terminal spacious without wasting too much screen area.
+cursor-color = #A8610A
+cursor-text = #FAF7F0
+
+selection-background = #DCE7F1
+selection-foreground = #1E2935
+
+# Preserve application color scales such as Codex and Claude usage charts.
+minimum-contrast = 1
+
+# Normal ANSI colors.
+palette = 0=#26313D
+palette = 1=#AD3028
+palette = 2=#327044
+palette = 3=#785A16
+palette = 4=#285F9E
+palette = 5=#85477F
+palette = 6=#1B6C72
+palette = 7=#D8D4CB
+
+# Bright ANSI colors.
+palette = 8=#66717E
+palette = 9=#CA4037
+palette = 10=#448255
+palette = 11=#956F1C
+palette = 12=#3978B9
+palette = 13=#9D5A96
+palette = 14=#318288
+palette = 15=#FFFDF9
+
+# Terminal preferences.
+font-family = GeistMono Nerd Font
+font-size = 14
+
 window-padding-x = 12
 window-padding-y = 10
 window-padding-balance = true
 window-save-state = always
 
-# macOS behavior.
 macos-option-as-alt = left
 copy-on-select = false
 confirm-close-surface = false

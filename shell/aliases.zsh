@@ -18,7 +18,8 @@ alias phpstorm='open -a PhpStorm "$(pwd)"'
 # Misc
 alias python=python3
 alias o="open ."
-alias l="eza -la --group-directories-first --git"
+alias ls="eza --group-directories-first --classify=always"
+alias l="eza -la --group-directories-first --classify=always --git"
 alias tree="eza --tree"
 alias c="claude"
 alias reload="exec zsh"

@@ -38,13 +38,14 @@
   [[ $ZSH_VERSION == (5.<1->*|<6->.*) ]] || return
 
   # Prompt colors.
-  local grey='242'
-  local red='#FF5C57'
-  local yellow='#F3F99D'
-  local blue='#57C7FF'
-  local magenta='#FF6AC1'
-  local cyan='#9AEDFE'
-  local white='#F1F1F0'
+  local grey='#66717E'
+  local red='#AD3028'
+  local yellow='#785A16'
+  local blue='#285F9E'
+  local green='#327044'
+  local purple='#85477F'
+  local cyan='#1B6C72'
+  local white='#26313D'
 
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
@@ -67,16 +68,16 @@
   # Basic style options that define the overall prompt look.
   typeset -g POWERLEVEL9K_BACKGROUND=                            # transparent background
   typeset -g POWERLEVEL9K_{LEFT,RIGHT}_{LEFT,RIGHT}_WHITESPACE=  # no surrounding whitespace
-  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR=' '  # separate segments with a space
-  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # no end-of-line symbol
+  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SUBSEGMENT_SEPARATOR=' '  # separate same-color segments
+  typeset -g POWERLEVEL9K_{LEFT,RIGHT}_SEGMENT_SEPARATOR=        # join colored blocks without gaps
   typeset -g POWERLEVEL9K_VISUAL_IDENTIFIER_EXPANSION=           # no segment icons
 
   # Add an empty line before each prompt except the first. This doesn't emulate the bug
   # in Pure that makes prompt drift down whenever you use the Alt-C binding from fzf or similar.
   typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=false
 
-  # Magenta prompt symbol if the last command succeeded.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$magenta
+  # Green prompt symbol if the last command succeeded.
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$green
   # Red prompt symbol if the last command failed.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$red
   # Default prompt symbol.
@@ -96,6 +97,8 @@
 
   # Blue current directory.
   typeset -g POWERLEVEL9K_DIR_FOREGROUND=$blue
+  typeset -g POWERLEVEL9K_DIR_BACKGROUND='#DCE7F1'
+  typeset -g POWERLEVEL9K_DIR_LEFT_{LEFT,RIGHT}_WHITESPACE=' '
 
   # Context format when root: user@host. The first part white, the rest grey.
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$grey}@%m%f"
@@ -113,8 +116,15 @@
   # Yellow previous command duration.
   typeset -g POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND=$yellow
 
-  # Grey Git prompt. This makes stale prompts indistinguishable from up-to-date ones.
-  typeset -g POWERLEVEL9K_VCS_FOREGROUND=$grey
+  # Purple for a clean Git branch; amber calls attention to working-tree changes.
+  typeset -g POWERLEVEL9K_VCS_FOREGROUND=$purple
+  typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=$purple
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=$yellow
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=$yellow
+  typeset -g POWERLEVEL9K_VCS_CLEAN_BACKGROUND='#E8DFEB'
+  typeset -g POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND='#F1E3C4'
+  typeset -g POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='#F1E3C4'
+  typeset -g POWERLEVEL9K_VCS_LEFT_{LEFT,RIGHT}_WHITESPACE=' '
 
   # Disable async loading indicator to make directories that aren't Git repositories
   # indistinguishable from large Git repositories without known state.
