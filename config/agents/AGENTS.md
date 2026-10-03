@@ -61,3 +61,18 @@ Fix bugs where they start, not where they show up. For a hard bug, use the `diag
 - If a workaround needs a paragraph-long comment to justify it, fix the code instead.
 - After fixing one instance, search the codebase for the same pattern and fix every instance.
 - When something fails only after a restart, check persistent state before code: config files, caches, lock files, and serialized state. If clearing a state file restores the behaviour, add validation for that state.
+
+# Testing
+
+Before adding or changing a test, answer these four questions. If one has no answer, don't add the test yet.
+
+1. What behavior or contract does it protect?
+2. What credible regression makes it fail?
+3. Why doesn't existing coverage already catch that regression? Each contract has one owner test at the strongest boundary. Extend a table-driven case or shared fixture instead of writing a near-duplicate.
+4. Does it need a test-only hook, meaning an export, flag, wrapper, or injection parameter that no production caller uses? If so, test at the real boundary instead.
+
+A test that breaks when you refactor without changing behavior asserts implementation. Rewrite it at the owning boundary before you land it.
+
+A bug regression test must fail on the pre-fix code for the reason the bug describes. If it never failed, it proves the mock, not the fix. Write one regression test at the owner boundary, not one per layer the bug crosses.
+
+To audit or prune existing tests, use the `test-audit` skill. It also lists the junk patterns these questions screen out.
