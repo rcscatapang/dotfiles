@@ -70,6 +70,11 @@ step "Agent skills"
 DOTFILES_BACKUP_ROOT="$BACKUP" "$DOTFILES/bin/link-agent-skills"
 success "Shared skills linked for Codex and Claude Code"
 
+step "Agent instructions"
+link config/agents/AGENTS.md "$HOME/.codex/AGENTS.md"
+link config/agents/AGENTS.md "$HOME/.claude/CLAUDE.md"
+success "Shared instructions linked for Codex and Claude Code"
+
 step "Agent status lines"
 link config/claude/statusline-command.sh "$HOME/.claude/statusline-command.sh"
 "$DOTFILES/bin/configure-agent-statuslines"
